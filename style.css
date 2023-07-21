@@ -1,0 +1,47 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+}
+
+.button {
+    /*height: 10px;
+    width: 10px;*/
+    background-color: aqua;
+}
+
+.equals {
+    height: 20px;
+    width: 10px;
+    background-color: aliceblue;
+}
+
+#button-container {
+    display: flex;
+    gap: 10px;
+    width: 90%;
+    height: 70%;
+    background-color: antiquewhite;
+}
+
+#calculator {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: center;
+    height: 600px;
+    width: 500px;
+    background-color: grey;
+}
+
+#row {
+    width: 100%;
+    background-color: black;
+}
+
+#screen {
+    width: 90%;
+    height: 20%;
+    background-color: green;
+    margin-top: 20px;
+}
