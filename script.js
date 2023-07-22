@@ -1,8 +1,16 @@
-let buttonRow = document.querySelectorAll('.row')
-console.log(buttonRow[0])
-for(let i = 0; i < 5; i++) {
-    let button = document.createElement('div')
-    button.classList.add('button')
-    buttonRow[0].appendChild('button')
+let buttonContainer = document.querySelector('#button-container')
 
+for (let i = 0; i < 5; i++) {
+    let column = document.createElement('div')
+    column.classList.add('col')
+    for (let j = 0; j < 4; j++) {
+        if(i == 4 && j == 3) break
+        let button = document.createElement('button')
+
+        if (i == 4 && j == 2) button.classList.add('equals')
+        else button.classList.add('button')
+
+        column.appendChild(button)
+    }
+    buttonContainer.appendChild(column)
 }
