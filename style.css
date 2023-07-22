@@ -14,12 +14,17 @@ button {
 
 button:hover {
     cursor: pointer;
+    filter: brightness(90%)
 }
 
 .button {
     background-color: aqua;
     height: 60px;
     width: 65px;   
+}
+
+.button-label {
+    font-size: 18px;
 }
 
 .col {
