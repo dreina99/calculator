@@ -62,6 +62,17 @@ button:hover {
     border: 2px solid black;
 }
 
+.input {
+    display: flex;
+    justify-content: end;
+    flex: 1;
+    padding-right: 15px;
+}
+
+.save-eq {
+    flex: 1;
+}
+
 #screen {
     width: 90%;
     height: 20%;
@@ -69,4 +80,11 @@ button:hover {
     margin-top: 20px;
     margin-bottom: 15px;
     border: 2px solid black;
+    display: flex;
+    flex-direction: column;
+}
+
+#screen > span {
+    color: lightgreen;
+    font-size: 28px;
 }
