@@ -51,13 +51,14 @@ let btns = document.querySelectorAll('.button')
 btns.forEach((btn) => {
     btn.addEventListener('click', () => {
         let btnLabel = btn.children[0].innerHTML
+        let currInput = inputEq.innerHTML
         
+        // clear was clicked
         if(btn.classList.contains('clear')) {
             inputEq.innerHTML = '0'
             savedEq.innerHTML = ''
-        } else if (btn.classList.contains('number')) {
-            let currInput = inputEq.innerHTML
-            
+        // number was clicked
+        } else if (btn.classList.contains('number')) {            
             // number in input cannot be greater than 12
             // check uses 11 because it is pre append
             if(currInput.length > 11)
@@ -70,6 +71,9 @@ btns.forEach((btn) => {
                     inputEq.innerHTML = btnLabel
             else
                 inputEq.innerHTML += btnLabel
+        } else if (btn.classList.contains('backspace')) {
+            if(currInput.length == 1) inputEq.innerHTML = 0
+            else inputEq.innerHTML = inputEq.innerHTML.slice(0, inputEq.innerHTML.length - 1)
         }
     })
 })
