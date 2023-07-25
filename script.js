@@ -7,6 +7,23 @@ let buttonLabels = [[7, 4, 1, 'C'],
 let savedEq = document.querySelector('.save-eq')
 let inputEq = document.querySelector('.input')
 let opVals = []
+let lastClick = ""
+
+let categorizeButton = (button, i, j) => {
+    // categorize buttons
+    if(buttonLabels[i][j] == 'C') button.classList.add('clear')
+    else if(buttonLabels[i][j] == '.') button.classList.add('decimal')
+    else if(buttonLabels[i][j] == '+/-') button.classList.add('negative')
+    else if(buttonLabels[i][j] == 'x' ||
+            buttonLabels[i][j] == '-' ||
+            buttonLabels[i][j] == '+' ||
+            buttonLabels[i][j] == '÷') button.classList.add('op')
+    else if(buttonLabels[i][j] == '\u2192') button.classList.add('backspace')
+    else if(buttonLabels[i][j] == '=') {
+        button.classList.add('equals')
+        //button.classList.remove('button')
+    } else button.classList.add('number')
+}
 
 // add buttons to calculator
 for (let i = 0; i < 5; i++) {
@@ -27,19 +44,7 @@ for (let i = 0; i < 5; i++) {
         label.classList.add('button-label')
         label.innerHTML = buttonLabels[i][j]
 
-        // categorize buttons
-        if(buttonLabels[i][j] == 'C') button.classList.add('clear')
-        else if(buttonLabels[i][j] == '.') button.classList.add('decimal')
-        else if(buttonLabels[i][j] == '+/-') button.classList.add('negative')
-        else if(buttonLabels[i][j] == 'x' ||
-                buttonLabels[i][j] == '-' ||
-                buttonLabels[i][j] == '+' ||
-                buttonLabels[i][j] == '÷') button.classList.add('op')
-        else if(buttonLabels[i][j] == '\u2192') button.classList.add('backspace')
-        else if(buttonLabels[i][j] == '=') {
-            button.classList.add('equals')
-            //button.classList.remove('button')
-        } else button.classList.add('number')
+        categorizeButton(button, i, j)
 
         button.appendChild(label)
         column.appendChild(button)
@@ -66,108 +71,130 @@ let performCalculation = () => {
     else return num1 - num2
 }
 
+let clearVals = () => {
+    inputEq.innerHTML = '0'
+    savedEq.innerHTML = ''
+    opVals = []
+    lastClick = 'clear'
+}
+
+let numberHandler = (currInput, btnLabel) => {
+    // handle leading 0 error
+    if(currInput == '0')
+        if(btnLabel == '0')
+            return 0
+        else 
+            inputEq.textContent = btnLabel
+    // op last clicked -> start new number
+    else if (lastClick == 'op')
+        inputEq.textContent = btnLabel;
+    // append digit to number
+    else if(lastClick == 'equals') {
+        savedEq.textContent = ""
+        opVals = []
+        inputEq.textContent = btnLabel;
+    } else {
+        if(currInput.length < 12)
+            inputEq.textContent += btnLabel
+    }
+    lastClick = 'number'
+}
+
+let backspaceHandler = (currInput) => {
+    if(currInput.length == 1) inputEq.innerHTML = 0
+    else inputEq.innerHTML = inputEq.innerHTML.slice(0, inputEq.innerHTML.length - 1)
+    lastClick = 'backspace'
+}
+
+let opHandler = (btnLabel) => {
+    console.log(opVals)
+    // store values for first operation
+    if(opVals.length == 0) {
+        opVals.push(Number(inputEq.textContent))
+        opVals.push(btnLabel)
+    // update operator case
+    } else if (lastClick == 'op') {
+        opVals[1] = btnLabel
+    // retrieved number op number -> perform calculation
+    } else if (lastClick == 'number') {
+        console.log(opVals)
+        opVals.push(Number(inputEq.textContent))
+        let result = performCalculation()
+        // not a divide by 0 error
+        if(result != null) {
+            // store result
+            opVals[0] = result
+            opVals[1] = btnLabel
+            opVals.pop()
+            inputEq.textContent = result
+        }
+    } else if (lastClick == 'equals' || lastClick == 'backspace') {
+        opVals.push(btnLabel)
+    }
+    savedEq.textContent = `${opVals[0]} ${opVals[1]}`
+    lastClick = 'op'
+}
+
+let equalHandler = () => {
+    console.log(opVals)
+    console.log(lastClick)
+    if(opVals.length == 0) return
+
+    if (lastClick == 'number') {
+        opVals.push(Number(inputEq.textContent))
+        let result = performCalculation()
+        if(result != null) {
+            savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+            inputEq.textContent = result
+            opVals = [result]
+        }
+    } else if (lastClick == 'backspace') {
+        if(opVals.length == 1) inputEq.textContent = opVals[0]
+        else if (opVals.length == 2) {
+            opVals.push(Number(inputEq.textContent))
+            let result = performCalculation()
+            if(result != null)
+                savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+                inputEq.textContent = result
+                opVals = [result]
+        }
+        else inputEq.textContent = 0
+    } else if (lastClick == 'op' && inputEq.textContent != "") {
+        opVals.push(Number(inputEq.textContent))
+        let result = performCalculation()
+        if(result != null)
+            savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+            inputEq.textContent = result
+            opVals = [result]
+    }
+    lastClick = 'equals'
+}
+
 // capture event for buttons on page
 let btns = document.querySelectorAll('.button')
-let lastClick = ""
 btns.forEach((btn) => {
     btn.addEventListener('click', () => {
         let btnLabel = btn.children[0].innerHTML
-        let currInput = inputEq.innerHTML
         
         // clear was clicked
         if(btn.classList.contains('clear')) {
-            inputEq.innerHTML = '0'
-            savedEq.innerHTML = ''
-            opVals = []
-            lastClick = 'clear'
+            clearVals()    
         
         // number handler
         } else if (btn.classList.contains('number')) {
-            // handle leading 0 error
-            if(currInput == '0')
-                if(btnLabel == '0')
-                    return 0
-                else 
-                    inputEq.textContent = btnLabel
-            // op last clicked -> start new number
-            else if (lastClick == 'op')
-                inputEq.textContent = btnLabel;
-            // append digit to number
-            else
-                if(currInput.length < 12)
-                    inputEq.textContent += btnLabel
-            
-            lastClick = 'number'
+            numberHandler(inputEq.innerHTML, btnLabel)
 
         // backspace handler
         } else if (btn.classList.contains('backspace')) {
-            if(currInput.length == 1) inputEq.innerHTML = 0
-            else inputEq.innerHTML = inputEq.innerHTML.slice(0, inputEq.innerHTML.length - 1)
-            lastClick = 'backspace'
+            backspaceHandler(inputEq.innerHTML)
         
         // op handler
         } else if (btn.classList.contains('op')) {
-            console.log(opVals)
-            // store values for first operation
-            if(opVals.length == 0) {
-                opVals.push(Number(inputEq.textContent))
-                opVals.push(btnLabel)
-            // update operator case
-            } else if (lastClick == 'op') {
-                opVals[1] = btnLabel
-            // retrieved number op number -> perform calculation
-            } else if (lastClick == 'number') {
-                opVals.push(Number(inputEq.textContent))
-                let result = performCalculation()
-                // not a divide by 0 error
-                if(result != null)
-                    // store result
-                    opVals[0] = result
-                    opVals[1] = btnLabel
-                    opVals.pop()
-
-                    inputEq.textContent = result
-            } else if (lastClick == 'equals') {
-                opVals.push(btnLabel)
-            } else if (lastClick == 'backspace') {
-                opVals.push(btnLabel)
-            }
-            savedEq.textContent = `${opVals[0]} ${opVals[1]}`
-            lastClick = 'op'
-
+            opHandler(btnLabel)
+            
         // equals handler
         } else if (btn.classList.contains('equals')) {
-            console.log(opVals)
-            console.log(lastClick)
-            if(opVals.length == 0) return
-
-            if (lastClick == 'number') {
-                opVals.push(Number(inputEq.textContent))
-                let result = performCalculation()
-                if(result != null)
-                    savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
-                    inputEq.textContent = result
-                    opVals = [result]
-            } else if (lastClick == 'backspace') {
-                if(opVals.length == 1) inputEq.textContent = opVals[0]
-                else if (opVals.length == 2) {
-                    opVals.push(Number(inputEq.textContent))
-                    let result = performCalculation()
-                    if(result != null)
-                        savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
-                        inputEq.textContent = result
-                        opVals = [result]
-                }
-                else inputEq.textContent = 0
-            } else if (lastClick == 'op' && inputEq.textContent != "") {
-                opVals.push(Number(inputEq.textContent))
-                let result = performCalculation()
-                if(result != null)
-                    savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
-                    inputEq.textContent = result
-                    opVals = [result]``
-            }
-            lastClick = 'equals'
+            equalHandler()
         }
     })
 })
