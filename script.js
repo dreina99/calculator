@@ -79,17 +79,22 @@ let clearVals = () => {
 }
 
 let numberHandler = (currInput, btnLabel) => {
+    console.log(currInput)
     // handle leading 0 error
-    if(currInput == '0')
+    if(currInput == '0') {
         if(btnLabel == '0')
             return 0
-        else 
-            inputEq.textContent = btnLabel
+        else if (lastClick == "equals") {
+            savedEq.textContent = ""
+            opVals = []
+        }
+        inputEq.textContent = btnLabel
     // op last clicked -> start new number
-    else if (lastClick == 'op')
+    } else if (lastClick == 'op') {
         inputEq.textContent = btnLabel;
     // append digit to number
-    else if(lastClick == 'equals') {
+    } else if (lastClick == 'equals') {
+        console.log("here")
         savedEq.textContent = ""
         opVals = []
         inputEq.textContent = btnLabel;
@@ -107,7 +112,6 @@ let backspaceHandler = (currInput) => {
 }
 
 let opHandler = (btnLabel) => {
-    console.log(opVals)
     // store values for first operation
     if(opVals.length == 0) {
         opVals.push(Number(inputEq.textContent))
@@ -136,8 +140,6 @@ let opHandler = (btnLabel) => {
 }
 
 let equalHandler = () => {
-    console.log(opVals)
-    console.log(lastClick)
     if(opVals.length == 0) return
 
     if (lastClick == 'number') {
@@ -148,6 +150,8 @@ let equalHandler = () => {
             inputEq.textContent = result
             opVals = [result]
         }
+        console.log("here")
+        console.log(opVals)
     } else if (lastClick == 'backspace') {
         if(opVals.length == 1) inputEq.textContent = opVals[0]
         else if (opVals.length == 2) {
