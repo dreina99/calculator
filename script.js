@@ -38,7 +38,7 @@ for (let i = 0; i < 5; i++) {
         else if(buttonLabels[i][j] == '\u2192') button.classList.add('backspace')
         else if(buttonLabels[i][j] == '=') {
             button.classList.add('equals')
-            button.classList.remove('button')
+            //button.classList.remove('button')
         } else button.classList.add('number')
 
         button.appendChild(label)
@@ -61,8 +61,8 @@ let performCalculation = () => {
         return num1 + num2
     else if (eqOp == 'x')
         return num1 * num2
-    else if (eqOp == '+')
-        return num1 + num2
+    else if (eqOp == '÷')
+        return num1 / num2
     else return num1 - num2
 }
 
@@ -80,12 +80,9 @@ btns.forEach((btn) => {
             savedEq.innerHTML = ''
             opVals = []
             lastClick = 'clear'
+        
         // number handler
-        } else if (btn.classList.contains('number')) {            
-            // number in input cannot be greater than 12
-            if(currInput.length > 11)
-                return 0
-
+        } else if (btn.classList.contains('number')) {
             // handle leading 0 error
             if(currInput == '0')
                 if(btnLabel == '0')
@@ -97,15 +94,20 @@ btns.forEach((btn) => {
                 inputEq.textContent = btnLabel;
             // append digit to number
             else
-                inputEq.textContent += btnLabel
+                if(currInput.length < 12)
+                    inputEq.textContent += btnLabel
             
             lastClick = 'number'
+
         // backspace handler
         } else if (btn.classList.contains('backspace')) {
             if(currInput.length == 1) inputEq.innerHTML = 0
             else inputEq.innerHTML = inputEq.innerHTML.slice(0, inputEq.innerHTML.length - 1)
             lastClick = 'backspace'
+        
+        // op handler
         } else if (btn.classList.contains('op')) {
+            console.log(opVals)
             // store values for first operation
             if(opVals.length == 0) {
                 opVals.push(Number(inputEq.textContent))
@@ -119,12 +121,53 @@ btns.forEach((btn) => {
                 let result = performCalculation()
                 // not a divide by 0 error
                 if(result != null)
+                    // store result
                     opVals[0] = result
                     opVals[1] = btnLabel
-            }
+                    opVals.pop()
 
+                    inputEq.textContent = result
+            } else if (lastClick == 'equals') {
+                opVals.push(btnLabel)
+            } else if (lastClick == 'backspace') {
+                opVals.push(btnLabel)
+            }
             savedEq.textContent = `${opVals[0]} ${opVals[1]}`
             lastClick = 'op'
+
+        // equals handler
+        } else if (btn.classList.contains('equals')) {
+            console.log(opVals)
+            console.log(lastClick)
+            if(opVals.length == 0) return
+
+            if (lastClick == 'number') {
+                opVals.push(Number(inputEq.textContent))
+                let result = performCalculation()
+                if(result != null)
+                    savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+                    inputEq.textContent = result
+                    opVals = [result]
+            } else if (lastClick == 'backspace') {
+                if(opVals.length == 1) inputEq.textContent = opVals[0]
+                else if (opVals.length == 2) {
+                    opVals.push(Number(inputEq.textContent))
+                    let result = performCalculation()
+                    if(result != null)
+                        savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+                        inputEq.textContent = result
+                        opVals = [result]
+                }
+                else inputEq.textContent = 0
+            } else if (lastClick == 'op' && inputEq.textContent != "") {
+                opVals.push(Number(inputEq.textContent))
+                let result = performCalculation()
+                if(result != null)
+                    savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+                    inputEq.textContent = result
+                    opVals = [result]``
+            }
+            lastClick = 'equals'
         }
     })
 })
