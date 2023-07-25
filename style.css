@@ -67,10 +67,16 @@ button:hover {
     justify-content: end;
     flex: 1;
     padding-right: 15px;
+    font-size: 28px;
 }
 
 .save-eq {
+    display: flex;
     flex: 1;
+    justify-content: end;
+    padding-right: 15px;
+    font-size: 20px;
+    margin-top: 5px;
 }
 
 #screen {
@@ -86,5 +92,4 @@ button:hover {
 
 #screen > span {
     color: lightgreen;
-    font-size: 28px;
 }
