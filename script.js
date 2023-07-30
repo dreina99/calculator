@@ -79,7 +79,6 @@ let clearVals = () => {
 }
 
 let numberHandler = (currInput, btnLabel) => {
-    console.log(currInput)
     // handle leading 0 error
     if(currInput == '0') {
         if(btnLabel == '0')
@@ -94,7 +93,6 @@ let numberHandler = (currInput, btnLabel) => {
         inputEq.textContent = btnLabel;
     // append digit to number
     } else if (lastClick == 'equals') {
-        console.log("here")
         savedEq.textContent = ""
         opVals = []
         inputEq.textContent = btnLabel;
@@ -121,7 +119,6 @@ let opHandler = (btnLabel) => {
         opVals[1] = btnLabel
     // retrieved number op number -> perform calculation
     } else if (lastClick == 'number') {
-        console.log(opVals)
         opVals.push(Number(inputEq.textContent))
         let result = performCalculation()
         // not a divide by 0 error
@@ -150,8 +147,6 @@ let equalHandler = () => {
             inputEq.textContent = result
             opVals = [result]
         }
-        console.log("here")
-        console.log(opVals)
     } else if (lastClick == 'backspace') {
         if(opVals.length == 1) inputEq.textContent = opVals[0]
         else if (opVals.length == 2) {
@@ -163,7 +158,7 @@ let equalHandler = () => {
                 opVals = [result]
         }
         else inputEq.textContent = 0
-    } else if (lastClick == 'op' && inputEq.textContent != "") {
+    } else if (lastClick == 'op') {
         opVals.push(Number(inputEq.textContent))
         let result = performCalculation()
         if(result != null)
@@ -172,6 +167,11 @@ let equalHandler = () => {
             opVals = [result]
     }
     lastClick = 'equals'
+}
+
+let decimalHandler = () => {
+    if (inputEq.innerHTML.includes('.')) return
+    else inputEq.textContent += '.'
 }
 
 // capture event for buttons on page
@@ -199,6 +199,10 @@ btns.forEach((btn) => {
         // equals handler
         } else if (btn.classList.contains('equals')) {
             equalHandler()
+        
+        // decimal handler
+        } else if (btn.classList.contains('decimal')) {
+            decimalHandler()
         }
     })
 })
