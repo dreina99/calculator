@@ -88,6 +88,10 @@ let numberHandler = (currInput, btnLabel) => {
             opVals = []
         }
         inputEq.textContent = btnLabel
+    } else if (currInput == '-0') {
+        if(btnLabel == '0')
+            return 0
+        else inputEq.textContent = "-" + btnLabel
     // op last clicked -> start new number
     } else if (lastClick == 'op') {
         inputEq.textContent = btnLabel;
@@ -110,7 +114,9 @@ let backspaceHandler = (currInput) => {
 }
 
 let opHandler = (btnLabel) => {
-    
+    if(lastClick == 'backspace' && inputEq.textContent == '-') {
+        clearVals()
+    } 
     // store values for first operation
     if(opVals.length == 0) {
         opVals.push(Number(inputEq.textContent))
@@ -138,10 +144,9 @@ let opHandler = (btnLabel) => {
 }
 
 let equalHandler = () => {
-    console.log(opVals)
-    if(opVals.length == 0) return
+    if(opVals.length == 0 || inputEq.texContent == '-') return
     
-    if (lastClick == 'number') {
+    if (lastClick == 'number' || lastClick == 'sign') {
         opVals.push(Number(inputEq.textContent))
 
         // handle error where 2 numbers are in list
@@ -160,8 +165,9 @@ let equalHandler = () => {
             opVals = [result]
         }
     } else if (lastClick == 'backspace') {
-        if(opVals.length == 1) inputEq.textContent = opVals[0]
-        else if (opVals.length == 2) {
+        if(opVals.length == 1) {
+            opVals[0] = inputEq.textContent
+        } else if (opVals.length == 2) {
             opVals.push(Number(inputEq.textContent))
             let result = performCalculation()
             if(result != null)
@@ -184,10 +190,10 @@ let equalHandler = () => {
 let decimalHandler = () => {
     if (lastClick == 'op') {
         inputEq.textContent = '0.'
-    } else if (lastClick == 'equals') {
+    /*} else if (lastClick == 'equals') {
         inputEq.textContent = '0.'
         savedEq.textContent = ""
-        opVals = []
+        opVals = []*/
     } else if (inputEq.innerHTML.includes('.')) return
     else inputEq.textContent += '.'
 
@@ -195,7 +201,14 @@ let decimalHandler = () => {
 }
 
 let signHandler = () => {
-    return
+    if (inputEq.textContent == '0')
+        inputEq.textContent = '-0'
+    else if (inputEq.textContent[0] == '-')
+        inputEq.textContent = inputEq.textContent.slice(1, inputEq.textContent.length)
+    else if (inputEq.textContent[0] != '-')
+        inputEq.textContent = '-' + inputEq.textContent
+    
+    lastClick = 'sign'
 }
 
 // capture event for buttons on page
