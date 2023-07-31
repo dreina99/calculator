@@ -115,7 +115,8 @@ let backspaceHandler = (currInput) => {
 
 let opHandler = (btnLabel) => {
     if(lastClick == 'backspace' && inputEq.textContent == '-') {
-        clearVals()
+        alert('Silly goose. You need to input numbers.')
+        return
     } 
     // store values for first operation
     if(opVals.length == 0) {
