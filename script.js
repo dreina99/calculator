@@ -92,7 +92,7 @@ let numberHandler = (currInput, btnLabel) => {
     } else if (lastClick == 'op') {
         inputEq.textContent = btnLabel;
     // append digit to number
-    } else if (lastClick == 'equals') {
+    } else if (lastClick == 'equals') { 
         savedEq.textContent = ""
         opVals = []
         inputEq.textContent = btnLabel;
@@ -110,6 +110,7 @@ let backspaceHandler = (currInput) => {
 }
 
 let opHandler = (btnLabel) => {
+    
     // store values for first operation
     if(opVals.length == 0) {
         opVals.push(Number(inputEq.textContent))
@@ -137,10 +138,21 @@ let opHandler = (btnLabel) => {
 }
 
 let equalHandler = () => {
+    console.log(opVals)
     if(opVals.length == 0) return
-
+    
     if (lastClick == 'number') {
         opVals.push(Number(inputEq.textContent))
+
+        // handle error where 2 numbers are in list
+        if(opVals.length == 2) {
+            savedEq.textContent = ``
+            inputEq.textContent = opVals[1]
+            opVals = [opVals[1]]
+            lastClick = 'equals'
+            return
+        }
+
         let result = performCalculation()
         if(result != null) {
             savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
@@ -170,8 +182,20 @@ let equalHandler = () => {
 }
 
 let decimalHandler = () => {
-    if (inputEq.innerHTML.includes('.')) return
+    if (lastClick == 'op') {
+        inputEq.textContent = '0.'
+    } else if (lastClick == 'equals') {
+        inputEq.textContent = '0.'
+        savedEq.textContent = ""
+        opVals = []
+    } else if (inputEq.innerHTML.includes('.')) return
     else inputEq.textContent += '.'
+
+    lastClick = 'decimal'
+}
+
+let signHandler = () => {
+    return
 }
 
 // capture event for buttons on page
@@ -203,6 +227,10 @@ btns.forEach((btn) => {
         // decimal handler
         } else if (btn.classList.contains('decimal')) {
             decimalHandler()
+        
+        // positive/negative handler
+        } else {
+            signHandler()
         }
     })
 })
