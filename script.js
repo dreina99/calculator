@@ -144,6 +144,12 @@ let opHandler = (btnLabel) => {
     lastClick = 'op'
 }
 
+let setScreen = (result) => {
+    savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
+    inputEq.textContent = result
+    opVals = [result]
+}
+
 let equalHandler = () => {
     if(opVals.length == 0 || inputEq.texContent == '-') return
     
@@ -161,9 +167,7 @@ let equalHandler = () => {
 
         let result = performCalculation()
         if(result != null) {
-            savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
-            inputEq.textContent = result
-            opVals = [result]
+            setScreen(result)
         }
     } else if (lastClick == 'backspace') {
         if(opVals.length == 1) {
@@ -172,18 +176,14 @@ let equalHandler = () => {
             opVals.push(Number(inputEq.textContent))
             let result = performCalculation()
             if(result != null)
-                savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
-                inputEq.textContent = result
-                opVals = [result]
+                setScreen(result)
         }
         else inputEq.textContent = 0
     } else if (lastClick == 'op') {
         opVals.push(Number(inputEq.textContent))
         let result = performCalculation()
         if(result != null)
-            savedEq.textContent = `${opVals[0]} ${opVals[1]} ${opVals[2]} =`
-            inputEq.textContent = result
-            opVals = [result]
+            setScreen(result)
     }
     lastClick = 'equals'
 }
@@ -249,7 +249,7 @@ btns.forEach((btn) => {
     })
 })
 
-let nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+let nums = ['0','1', '2', '3', '4', '5', '6', '7', '8', '9']
 let ops = ['+', '-', 'x', 'X', '/']
 window.addEventListener('keydown', (e) => {
     e.preventDefault()
@@ -259,4 +259,5 @@ window.addEventListener('keydown', (e) => {
     else if (e.key == 'Enter' || e.key == '=') equalHandler()
     else if (e.key == '.') decimalHandler()
     else if (e.key == 'Backspace') backspaceHandler(inputEq.innerHTML)
+    else return
 })
