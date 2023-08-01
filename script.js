@@ -64,9 +64,9 @@ let performCalculation = () => {
         return null
     } else if (eqOp == '+')
         return num1 + num2
-    else if (eqOp == 'x')
+    else if (eqOp == 'x' || eqOp == '*' || eqOp == 'X')
         return num1 * num2
-    else if (eqOp == '÷')
+    else if (eqOp == '÷' || eqOp == '/')
         return num1 / num2
     else return num1 - num2
 }
@@ -247,4 +247,16 @@ btns.forEach((btn) => {
             signHandler()
         }
     })
+})
+
+let nums = ['1', '2', '3', '4', '5', '6', '7', '8', '9']
+let ops = ['+', '-', 'x', 'X', '/']
+window.addEventListener('keydown', (e) => {
+    e.preventDefault()
+    if (nums.includes(e.key)) numberHandler(inputEq.innerHTML, e.key)
+    else if (e.key == 'c' || e.key == 'C') clearVals()
+    else if (ops.includes(e.key)) opHandler(e.key)
+    else if (e.key == 'Enter' || e.key == '=') equalHandler()
+    else if (e.key == '.') decimalHandler()
+    else if (e.key == 'Backspace') backspaceHandler(inputEq.innerHTML)
 })
